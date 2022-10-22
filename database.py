@@ -38,23 +38,20 @@ class BancoDeDados(ABC):
 
     def geradorSQLUpdate(self, *args, nome_colunas=None, nome_tabela=None, condicao=None):
         valores = args[0]
-        sql = f"UPDATE {nome_tabela} SET {nome_colunas}=('{valores}') WHERE {condicao}"
-        print(sql)
+        sql = f"UPDATE {nome_tabela} SET {nome_colunas}='{valores}' WHERE {condicao}"
         return sql
 
 
 class OperacoesTabelasBD(BancoDeDados):
     
     def __init__(self, tabela) -> None:
-        super().__init__()
-        db_set = CONFIG
         self.tablela = tabela
         self.Bd = BancoDeDados(
-        dbname=db_set['banco_dados'],
-        user=db_set['usuario'],
-        port=db_set['porta'],
-        password=db_set['senha'],
-        host=db_set['host'])
+        dbname=CONFIG['banco_dados'],
+        user=CONFIG['usuario'],
+        port=CONFIG['porta'],
+        password=CONFIG['senha'],
+        host=CONFIG['host'])
     
 
     def atualizarColuna(self, coluna, condicao, atualizacao):
@@ -63,8 +60,12 @@ class OperacoesTabelasBD(BancoDeDados):
             nome_colunas=coluna, condicao=condicao)
         
         try:
-            self.Bd.executar()
+            self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
-            self.Bd.abortar
-        
+        except Exception as erro:
+            self.Bd.abortar()
+
+
+if __name__ == '__main__':
+    teste = OperacoesTabelasBD('portalcnn')
+    teste.atualizarColuna('link_materia', 'id_pk=0', 'fiuerfiuerhfieurhfieurfheirufhe' )
