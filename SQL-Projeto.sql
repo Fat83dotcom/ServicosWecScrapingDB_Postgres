@@ -15,8 +15,8 @@ CREATE TABLE materiasportal(
 	texto_materia text null
 );
 
-drop table materiasportal
-drop table portalcnn
+-- drop table materiasportal
+-- drop table portalcnn
 
 alter table portalcnn alter link_site drop not null;
 alter table materiasportal alter referencia_site drop not null
