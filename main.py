@@ -26,13 +26,15 @@ def coreCnn():
     for pk, links in enumerate(url):
         resposta = requests.get(links)
         html = BeautifulSoup(resposta.text, 'html.parser')
+        nomeSessao = links.split('/')[-2]
         dbPortal.atualizarColuna('dt_hr_pesquisa',f'id_pk={pk}', dataHora)
-        dbPortal.atualizarColuna('sessao_site', f'id_pk={pk}', links)
+        dbPortal.atualizarColuna('link_site', f'id_pk={pk}', links)
+        dbPortal.atualizarColuna('nome_sessao', f'id_pk={pk}', nomeSessao)
         for noticias in html.select('.home__list__item'):
             _pkeyNoticias = next(_pkNoticias)
             tituloMateria = noticias.a.get_text().strip()
             linkMateria = noticias.a.get('href').strip()
-            dbMaterias.atualizarColuna('sessao_site', f'id_pk={_pkeyNoticias}', links)
+            dbMaterias.atualizarColuna('referencia_site', f'id_pk={_pkeyNoticias}', pk)
             dbMaterias.atualizarColuna('link_materia', f'id_pk={_pkeyNoticias}', linkMateria)
             dbMaterias.atualizarColuna('titulo_materia', f'id_pk={_pkeyNoticias}', tituloMateria)
             resp = requests.get(linkMateria)
