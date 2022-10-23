@@ -22,11 +22,14 @@ alter table portalcnn alter link_site drop not null;
 alter table materiasportal alter referencia_site drop not null
 alter table portalcnn add column nome_sessao varchar(100) null
 alter table materiasportal add constraint fk_sessao_site foreign key (id_pk) references portalcnn(id_pk)
+alter table "Core_logservicos" alter dt_hr_exec_func type timestamp without time zone
 
 -- drop table portalcnn;
 select * from portalcnn;
 select * from materiasportal;
+select * from "Core_logservicos"
 
+update "Core_logservicos" set func_portal='CNN'
 
 select portalcnn.sessao_site, titulo_materia  from portalcnn inner join materiasportal 
 on(id_pk=referenciasti)
