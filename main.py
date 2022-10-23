@@ -5,8 +5,13 @@ from database import OperacoesTabelasBD
 from itertools import count
 
 
+def log():
+    with open('logs/log.txt', '+a') as log:
+        log.write(f'Função Executada às {datetime.now()}\n')
+
 
 def coreCnn():
+    log()
     dbPortal = OperacoesTabelasBD('portalcnn')
     dbMaterias = OperacoesTabelasBD('materiasportal')
     dataHora: str = str(datetime.now())
@@ -41,9 +46,14 @@ def coreCnn():
             html1 = BeautifulSoup(resp.text, 'html.parser')
             for materia in html1.select('.posts'):
                 dataMateria = materia.select_one('.post__data').get_text(strip=True)[:11].strip()
-                texto = materia.select_one('.post__content').get_text(' | ', strip=True)
+                textoCru = materia.find_all('p')
+                textoMateria = ''
+                for palavras in textoCru:
+                    palavra = palavras.get_text(' | ', strip=True)
+                    textoMateria += palavra
                 dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
                 datetime.strptime(dataMateria, '%d/%m/%Y'))
-                dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', texto)
+                dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)
+    
 
 coreCnn()
