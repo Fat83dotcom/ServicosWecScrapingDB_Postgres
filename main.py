@@ -5,16 +5,12 @@ from database import OperacoesTabelasBD
 from itertools import count
 
 
-def log():
-    with open('logs/log.txt', '+a') as log:
-        log.write(f'Função Executada às {datetime.now()}\n')
-
-
 def coreCnn():
-    log()
+    dbLog = OperacoesTabelasBD('Core_logservicos')
     dbPortal = OperacoesTabelasBD('portalcnn')
     dbMaterias = OperacoesTabelasBD('materiasportal')
     dataHora: str = str(datetime.now())
+    dbLog.inserirColunas((dataHora, 'CNN'), coluna='(dt_hr_exec_func, func_portal)')
     url = [
         'https://www.cnnbrasil.com.br/politica/',
         'https://www.cnnbrasil.com.br/nacional/',
@@ -54,6 +50,9 @@ def coreCnn():
                 dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
                 datetime.strptime(dataMateria, '%d/%m/%Y'))
                 dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)
-    
+    dbPortal.fecharConexao()
+    dbMaterias.fecharConexao()
+    dbLog.fecharConexao()
+
 
 coreCnn()
