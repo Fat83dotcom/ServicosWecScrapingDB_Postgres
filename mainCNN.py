@@ -55,4 +55,4 @@ def coreCnn():
     dbLog.fecharConexao()
 
 
-coreCnn()
+# coreCnn()
