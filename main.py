@@ -8,7 +8,7 @@ from itertools import count
 def coreCnn():
     dbLog = OperacoesTabelasBD('Core_logservicos')
     dbPortal = OperacoesTabelasBD('portalcnn')
-    dbMaterias = OperacoesTabelasBD('materiasportal')
+    dbMaterias = OperacoesTabelasBD('materiasportalcnn')
     dataHora: str = str(datetime.now())
     dbLog.inserirColunas((dataHora, 'CNN'), coluna='(dt_hr_exec_func, func_portal)')
     url = [
