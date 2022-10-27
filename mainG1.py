@@ -6,7 +6,7 @@ from itertools import count
 
 
 def coreG1():
-    dbLog = OperacoesTabelasBD('Core_logservicos')
+    dbLog = OperacoesTabelasBD('"Core_logservicos"')
     dbPortal = OperacoesTabelasBD('portalG1')
     dbMaterias = OperacoesTabelasBD('materiasportalG1')
     dataHora: str = str(datetime.now())
@@ -25,7 +25,8 @@ def coreG1():
             resposta = requests.get(links)
             html = BeautifulSoup(resposta.text, 'html.parser')
             print(100*'*')
-            print(next(_pkPortal))
+            # print(next(_pkPortal))
+            dbPortal.inserirColunas(f'({next(_pkPortal)})', coluna='(id_pk)')
             print(nomeSessao)
             print(links)
             print(100*'*')
@@ -37,7 +38,8 @@ def coreG1():
                         resposta = requests.get(link)
                         html = BeautifulSoup(resposta.text, 'html.parser')
                         for materia in html.select('.mc-body'):
-                            print(next(_pkNoticias))
+                            # print(next(_pkNoticias))
+                            dbMaterias.inserirColunas(f'({next(_pkNoticias)})', coluna='(id_pk)')
                             tituloMateria = materia.select_one('.title').meta.get('content')
                             dataMateria = materia.select_one(
                                 '.content-publication-data__updated').time.get('datetime')
@@ -56,3 +58,6 @@ def coreG1():
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()
     dbLog.fecharConexao()
+
+
+coreG1()

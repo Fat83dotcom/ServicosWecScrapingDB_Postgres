@@ -33,8 +33,8 @@ class BancoDeDados(ABC):
 
     def geradorSQLInsert(self, *args, nome_colunas=None,  nome_tabela=None):
         valores = args[0]
-        tabela = f'"{nome_tabela}"'
-        sql = f"INSERT INTO {tabela} {nome_colunas} VALUES {valores}"
+        # tabela = f'{}'
+        sql = f"INSERT INTO {nome_tabela} {nome_colunas} VALUES {valores}"
         return sql
 
     def geradorSQLUpdate(self, *args, nome_colunas=None, nome_tabela=None, condicao=None):
@@ -71,8 +71,9 @@ class OperacoesTabelasBD(BancoDeDados):
             sql = self.geradorSQLInsert(*args, nome_colunas=coluna, nome_tabela=self.tablela)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
+        except Exception as erro:
             self.Bd.abortar()
+            print(erro)
     
     def fecharConexao(self):
         return self.Bd.fecharConexao()
