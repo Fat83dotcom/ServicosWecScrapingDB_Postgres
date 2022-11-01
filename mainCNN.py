@@ -6,7 +6,7 @@ from itertools import count
 
 
 def coreCnn():
-    dbLog = OperacoesTabelasBD('Core_logservicos')
+    dbLog = OperacoesTabelasBD('"Core_logservicos"')
     dbPortal = OperacoesTabelasBD('portalcnn')
     dbMaterias = OperacoesTabelasBD('materiasportalcnn')
     dataHora: str = str(datetime.now())
