@@ -52,6 +52,11 @@ select portalcnn.sessao_site, titulo_materia  from portalcnn inner join materias
 on(id_pk=referenciasti)
 where portalcnn.id_pk=3 group by portalcnn.sessao_site, titulo_materia;
 
+select * from portalg1
+select * from materiasportalg1
+truncate table portalg1 cascade
+truncate table materiasportalg1
+
 
 insert into portalcnn (id_pk, link_site) values
 (0, 'd'),
