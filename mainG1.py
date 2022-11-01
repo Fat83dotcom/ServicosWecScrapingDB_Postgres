@@ -24,12 +24,18 @@ def coreG1():
             nomeSessao = link.select_one('.menu-item-title').get_text().title()
             resposta = requests.get(links)
             html = BeautifulSoup(resposta.text, 'html.parser')
-            print(100*'*')
-            # print(next(_pkPortal))
-            dbPortal.inserirColunas(f'({next(_pkPortal)})', coluna='(id_pk)')
-            print(nomeSessao)
-            print(links)
-            print(100*'*')
+            pkPortal = next(_pkPortal)
+            dbPortal.atualizarColuna('dt_hr_pesquisa', f'id_pk={pkPortal}', dataHora)
+            dbPortal.atualizarColuna('nome_sessao', f'id_pk={pkPortal}', nomeSessao)
+            dbPortal.atualizarColuna('link_site', f'id_pk={pkPortal}', links)
+
+
+            # print(100*'*')
+            # print(pk)
+            # # dbPortal.inserirColunas(f'({next(_pkPortal)})', coluna='(id_pk)')
+            # print(nomeSessao)
+            # print(links)
+            # print(100*'*')
 
             for dadosMateria in html.select('.feed-post-link'):
                 link = dadosMateria.get('href')
@@ -38,20 +44,20 @@ def coreG1():
                         resposta = requests.get(link)
                         html = BeautifulSoup(resposta.text, 'html.parser')
                         for materia in html.select('.mc-body'):
-                            # print(next(_pkNoticias))
-                            dbMaterias.inserirColunas(f'({next(_pkNoticias)})', coluna='(id_pk)')
+                            print(next(_pkNoticias))
+                            # dbMaterias.inserirColunas(f'({next(_pkNoticias)})', coluna='(id_pk)')
                             tituloMateria = materia.select_one('.title').meta.get('content')
                             dataMateria = materia.select_one(
                                 '.content-publication-data__updated').time.get('datetime')
                             textoMateria = materia.find_all('p', class_='content-text__container')
-                            # print(tituloMateria)
-                            # print(dataMateria)
-                            # print(textoMateria)
+                            print(tituloMateria)
+                            print(dataMateria)
+                            print(textoMateria)
                             palavras = ''
                             for palavra in textoMateria:
                                 palavras += f'{str(palavra)} \n'
 
-                            # print(palavras)
+                            print(palavras)
                             print(100*'#')
                     except Exception as erro:
                         print(erro)
