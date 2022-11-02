@@ -32,7 +32,7 @@ class BancoDeDados(ABC):
 
     def geradorSQLInsert(self, *args, nome_colunas=None,  nome_tabela=None):
         valores = args[0]
-        sql = f"INSERT INTO {nome_tabela} {nome_colunas} VALUES {valores}"
+        sql = "INSERT INTO %s %s VALUES %s" % (nome_tabela, nome_colunas, valores)
         return sql
 
     def geradorSQLUpdate(self, *args, nome_colunas=None, nome_tabela=None, condicao=None):
