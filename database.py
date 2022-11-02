@@ -1,4 +1,3 @@
-from mimetypes import init
 import psycopg2
 from abc import ABC
 from databaseSettings import CONFIG
@@ -33,13 +32,12 @@ class BancoDeDados(ABC):
 
     def geradorSQLInsert(self, *args, nome_colunas=None,  nome_tabela=None):
         valores = args[0]
-        # tabela = f'{}'
         sql = f"INSERT INTO {nome_tabela} {nome_colunas} VALUES {valores}"
         return sql
 
     def geradorSQLUpdate(self, *args, nome_colunas=None, nome_tabela=None, condicao=None):
         valores = args[0]
-        sql = f"UPDATE {nome_tabela} SET {nome_colunas}='{valores}' WHERE {condicao}"
+        sql = "UPDATE %s SET %s='%s' WHERE %s" % (nome_tabela, nome_colunas, valores, condicao)
         return sql
 
 
