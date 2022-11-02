@@ -43,7 +43,7 @@ alter table materiasportal rename to materiasportalcnn
 
 -- drop table portalcnn;
 select * from portalcnn;
-select * from materiasportal;
+select * from materiasportalcnn;
 select * from "Core_logservicos"
 
 update "Core_logservicos" set func_portal='CNN'
