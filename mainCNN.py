@@ -11,6 +11,7 @@ def coreCnn():
     dbMaterias = OperacoesTabelasBD('materiasportalcnn')
     dataHora: str = str(datetime.now())
     dbLog.inserirColunas((dataHora, 'CNN'), coluna='(dt_hr_exec_func, func_portal)')
+
     url = [
         'https://www.cnnbrasil.com.br/politica/',
         'https://www.cnnbrasil.com.br/nacional/',
@@ -23,6 +24,7 @@ def coreCnn():
         'https://www.cnnbrasil.com.br/estilo/',
         'https://www.cnnbrasil.com.br/loterias/',
     ]
+
     _pkNoticias = count(0)
     for pk, links in enumerate(url):
         resposta = requests.get(links)

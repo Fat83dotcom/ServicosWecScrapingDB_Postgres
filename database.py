@@ -59,9 +59,11 @@ class OperacoesTabelasBD(BancoDeDados):
             nome_colunas=coluna, condicao=condicao)
         
         try:
+            # print(sql)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
+        except Exception as erro:
+            # print(erro)
             self.Bd.abortar()
     
     def inserirColunas(self, *args, coluna):
@@ -71,7 +73,7 @@ class OperacoesTabelasBD(BancoDeDados):
             self.Bd.enviar()
         except Exception as erro:
             self.Bd.abortar()
-            print(erro)
+            # print(erro)
     
     def fecharConexao(self):
         return self.Bd.fecharConexao()
