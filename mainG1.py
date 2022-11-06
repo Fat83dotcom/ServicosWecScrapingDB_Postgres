@@ -18,10 +18,16 @@ def coreG1():
 
     _pkPortal = count(0)
     _pkNoticias = count(0)
+    filtroDeLinks: set = set()
     for linkMateria in html.select('.menu-item-link'):
         links = linkMateria.get('href')
-        if links is not None and (links.count('/') == 4):
-            nomeSessao = linkMateria.select_one('.menu-item-title').get_text().title().replace("'", '"')
+        if links is not None and (links.count('/') == 4) and links not in filtroDeLinks:
+            filtroDeLinks.add(links)
+            nomeSessao = linkMateria.select_one('.menu-item-title').get_text().replace("'", '"').title()
+            if 'Primeira Página' in nomeSessao or 'Primeira página' in nomeSessao:
+                nomeSessao += ' ' + links.split('/')[-2].title()
+            elif 'Esporte' in nomeSessao:
+                nomeSessao += ' ' + links.split('/')[-2].upper()
             resposta = requests.get(links)
             html = BeautifulSoup(resposta.text, 'html.parser')
             pkPortal = next(_pkPortal)
@@ -40,15 +46,15 @@ def coreG1():
                             tituloMateria = materia.select_one('.title').meta.get('content').replace("'", '"')
                             dataMateria = materia.select_one(
                                 '.content-publication-data__updated').time.get('datetime')
-                            textoMateria = materia.find_all('p', class_='content-text__container')
-                            palavras = ''
-                            for palavra in textoMateria:
-                                palavras += f'{str(palavra)} \n'.replace("'", '')
+                            textoCru = materia.find_all('p', class_='content-text__container')
+                            textoMateria = ''
+                            for palavra in textoCru:
+                                textoMateria += palavra.get_text(' | ', strip=True).replace("'", '')
                             dbMaterias.atualizarColuna('referencia_site', pkNoticias, pkPortal)
                             dbMaterias.atualizarColuna('dt_materia', pkNoticias, dataMateria)
                             dbMaterias.atualizarColuna('link_materia', pkNoticias, linkMateria)
                             dbMaterias.atualizarColuna('titulo_materia', pkNoticias, tituloMateria)
-                            dbMaterias.atualizarColuna('texto_materia', pkNoticias, palavras)
+                            dbMaterias.atualizarColuna('texto_materia', pkNoticias, textoMateria)
                     except Exception as erro:
                         print(erro)
     dbPortal.fecharConexao()
