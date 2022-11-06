@@ -47,8 +47,7 @@ def coreCnn():
                 textoCru = materia.find_all('p')
                 textoMateria = ''
                 for palavras in textoCru:
-                    palavra = palavras.get_text(' | ', strip=True)
-                    textoMateria += palavra
+                    textoMateria += palavras.get_text(' | ', strip=True)
                 dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
                 datetime.strptime(dataMateria, '%d/%m/%Y'))
                 dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)
