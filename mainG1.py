@@ -6,7 +6,7 @@ from itertools import count
 
 
 def coreG1():
-    dbLog = OperacoesTabelasBD('Core_logservicos')
+    dbLog = OperacoesTabelasBD('"Core_logservicos"')
     dbPortal = OperacoesTabelasBD('portalG1')
     dbMaterias = OperacoesTabelasBD('materiasportalG1')
     dataHora: str = str(datetime.now())
@@ -18,41 +18,48 @@ def coreG1():
 
     _pkPortal = count(0)
     _pkNoticias = count(0)
-    for link in html.select('.menu-item-link'):
-        links = link.get('href')
-        if links is not None and (links.count('/') == 4):
-            nomeSessao = link.select_one('.menu-item-title').get_text().title()
+    filtroDeLinks: set = set()
+    for linkMateria in html.select('.menu-item-link'):
+        links = linkMateria.get('href')
+        if links is not None and (links.count('/') == 4) and links not in filtroDeLinks:
+            filtroDeLinks.add(links)
+            nomeSessao = linkMateria.select_one('.menu-item-title').get_text().replace("'", '"').title()
+            if 'Primeira Página' in nomeSessao or 'Primeira página' in nomeSessao:
+                nomeSessao += ' ' + links.split('/')[-2].title()
+            elif 'Esporte' in nomeSessao:
+                nomeSessao += ' ' + links.split('/')[-2].upper()
             resposta = requests.get(links)
             html = BeautifulSoup(resposta.text, 'html.parser')
-            print(100*'*')
-            print(next(_pkPortal))
-            print(nomeSessao)
-            print(links)
-            print(100*'*')
+            pkPortal = next(_pkPortal)
+            dbPortal.atualizarColuna('dt_hr_pesquisa', f'id_pk={pkPortal}', dataHora)
+            dbPortal.atualizarColuna('nome_sessao', f'id_pk={pkPortal}', nomeSessao)
+            dbPortal.atualizarColuna('link_site', f'id_pk={pkPortal}', links)
 
             for dadosMateria in html.select('.feed-post-link'):
-                link = dadosMateria.get('href')
-                if link is not None:
+                linkMateria = dadosMateria.get('href')
+                if linkMateria is not None:
                     try:
-                        resposta = requests.get(link)
+                        resposta = requests.get(linkMateria)
                         html = BeautifulSoup(resposta.text, 'html.parser')
                         for materia in html.select('.mc-body'):
-                            print(next(_pkNoticias))
-                            tituloMateria = materia.select_one('.title').meta.get('content')
+                            pkNoticias = f'id_pk={next(_pkNoticias)}'
+                            tituloMateria = materia.select_one('.title').meta.get('content').replace("'", '"')
                             dataMateria = materia.select_one(
                                 '.content-publication-data__updated').time.get('datetime')
-                            textoMateria = materia.find_all('p', class_='content-text__container')
-                            # print(tituloMateria)
-                            # print(dataMateria)
-                            # print(textoMateria)
-                            palavras = ''
-                            for palavra in textoMateria:
-                                palavras += f'{str(palavra)} \n'
-
-                            # print(palavras)
-                            print(100*'#')
+                            textoCru = materia.find_all('p', class_='content-text__container')
+                            textoMateria = ''
+                            for palavra in textoCru:
+                                textoMateria += palavra.get_text(' | ', strip=True).replace("'", '')
+                            dbMaterias.atualizarColuna('referencia_site', pkNoticias, pkPortal)
+                            dbMaterias.atualizarColuna('dt_materia', pkNoticias, dataMateria)
+                            dbMaterias.atualizarColuna('link_materia', pkNoticias, linkMateria)
+                            dbMaterias.atualizarColuna('titulo_materia', pkNoticias, tituloMateria)
+                            dbMaterias.atualizarColuna('texto_materia', pkNoticias, textoMateria)
                     except Exception as erro:
                         print(erro)
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()
     dbLog.fecharConexao()
+
+
+coreG1()

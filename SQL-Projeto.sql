@@ -43,7 +43,7 @@ alter table materiasportal rename to materiasportalcnn
 
 -- drop table portalcnn;
 select * from portalcnn;
-select * from materiasportal;
+select * from materiasportalcnn;
 select * from "Core_logservicos"
 
 update "Core_logservicos" set func_portal='CNN'
@@ -51,6 +51,11 @@ update "Core_logservicos" set func_portal='CNN'
 select portalcnn.sessao_site, titulo_materia  from portalcnn inner join materiasportal 
 on(id_pk=referenciasti)
 where portalcnn.id_pk=3 group by portalcnn.sessao_site, titulo_materia;
+
+select * from portalg1
+select * from materiasportalg1
+truncate table portalg1 cascade
+truncate table materiasportalg1
 
 
 insert into portalcnn (id_pk, link_site) values

@@ -6,11 +6,12 @@ from itertools import count
 
 
 def coreCnn():
-    dbLog = OperacoesTabelasBD('Core_logservicos')
+    dbLog = OperacoesTabelasBD('"Core_logservicos"')
     dbPortal = OperacoesTabelasBD('portalcnn')
     dbMaterias = OperacoesTabelasBD('materiasportalcnn')
     dataHora: str = str(datetime.now())
     dbLog.inserirColunas((dataHora, 'CNN'), coluna='(dt_hr_exec_func, func_portal)')
+
     url = [
         'https://www.cnnbrasil.com.br/politica/',
         'https://www.cnnbrasil.com.br/nacional/',
@@ -23,6 +24,7 @@ def coreCnn():
         'https://www.cnnbrasil.com.br/estilo/',
         'https://www.cnnbrasil.com.br/loterias/',
     ]
+
     _pkNoticias = count(0)
     for pk, links in enumerate(url):
         resposta = requests.get(links)
@@ -45,8 +47,7 @@ def coreCnn():
                 textoCru = materia.find_all('p')
                 textoMateria = ''
                 for palavras in textoCru:
-                    palavra = palavras.get_text(' | ', strip=True)
-                    textoMateria += palavra
+                    textoMateria += palavras.get_text(' | ', strip=True)
                 dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
                 datetime.strptime(dataMateria, '%d/%m/%Y'))
                 dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)

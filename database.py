@@ -1,4 +1,3 @@
-from mimetypes import init
 import psycopg2
 from abc import ABC
 from databaseSettings import CONFIG
@@ -33,13 +32,12 @@ class BancoDeDados(ABC):
 
     def geradorSQLInsert(self, *args, nome_colunas=None,  nome_tabela=None):
         valores = args[0]
-        tabela = f'"{nome_tabela}"'
-        sql = f"INSERT INTO {tabela} {nome_colunas} VALUES {valores}"
+        sql = "INSERT INTO %s %s VALUES %s" % (nome_tabela, nome_colunas, valores)
         return sql
 
     def geradorSQLUpdate(self, *args, nome_colunas=None, nome_tabela=None, condicao=None):
         valores = args[0]
-        sql = f"UPDATE {nome_tabela} SET {nome_colunas}='{valores}' WHERE {condicao}"
+        sql = "UPDATE %s SET %s='%s' WHERE %s" % (nome_tabela, nome_colunas, valores, condicao)
         return sql
 
 
@@ -61,9 +59,11 @@ class OperacoesTabelasBD(BancoDeDados):
             nome_colunas=coluna, condicao=condicao)
         
         try:
+            # print(sql)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
+        except Exception as erro:
+            # print(erro)
             self.Bd.abortar()
     
     def inserirColunas(self, *args, coluna):
@@ -71,8 +71,9 @@ class OperacoesTabelasBD(BancoDeDados):
             sql = self.geradorSQLInsert(*args, nome_colunas=coluna, nome_tabela=self.tablela)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
+        except Exception as erro:
             self.Bd.abortar()
+            # print(erro)
     
     def fecharConexao(self):
         return self.Bd.fecharConexao()
