@@ -20,14 +20,15 @@ def coreUOL():
     _pkNoticias = count(0)
     for linksMenuNoticias in html.select('.heading-style'):
         try:
-            pkPortal = next(_pkPortal)
+            pkPortalCru = next(_pkPortal)
+            pkPortal = f'id_pk={pkPortalCru}'
             nomeSessao = linksMenuNoticias.select_one('.custom-title').get_text()
             linkSessao = linksMenuNoticias.a.get('href')
             print(pkPortal)
             print(linkSessao)
-            dbPortal.inserirColunas(f'({pkPortal})', coluna='(id_pk)')
-            print(100 * '#')
-            # print(nomeSessao)
+            dbPortal.atualizarColuna('dt_hr_pesquisa', pkPortal, dataHora)
+            dbPortal.atualizarColuna('nome_sessao', pkPortal, nomeSessao)
+            dbPortal.atualizarColuna('link_site', pkPortal, linkSessao)
             resposta = requests.get(linkSessao)
             html = BeautifulSoup(resposta.text, 'html.parser')
             for linksMaterias in html.select('.thumbnails-item.align-horizontal'):
@@ -36,20 +37,18 @@ def coreUOL():
                 html = BeautifulSoup(resposta.text, 'html.parser')
                 print(linkMateria)
                 for dadosMateria in html.select('.container.article'):
-                    pkNoticias = next(_pkNoticias)
-                    dbMaterias.inserirColunas(f'({pkNoticias})', coluna='(id_pk)')
-                    # dbMaterias.inserirColunas(pkPortal, coluna=)
-                    print(pkNoticias)
-                    print(100 * '*')
-                    tituloMateria = dadosMateria.select_one('.custom-title').get_text()
+                    pkNoticias = f'id_pk={next(_pkNoticias)}'
+                    tituloMateria = dadosMateria.select_one('.custom-title').get_text().replace("'", '"')
                     dataMateria = dadosMateria.select_one('.p-author.time').get_text().replace('h', ':').strip()[:16]
                     dataMateria = datetime.strptime(dataMateria, '%d/%m/%Y %H:%M')
                     textoMateria = ''
                     for textoCru in dadosMateria.select_one('.text').find_all('p'):
-                        textoMateria += textoCru.get_text(' | ', strip=True)
-                    # print(dataMateria)
-                    # print(tituloMateria)
-                    # print(textoMateria)
+                        textoMateria += textoCru.get_text(' | ', strip=True).replace("'", '"')
+                    dbMaterias.atualizarColuna('referencia_site', pkNoticias, pkPortalCru)
+                    dbMaterias.atualizarColuna('dt_materia', pkNoticias, dataMateria)
+                    dbMaterias.atualizarColuna('link_materia', pkNoticias, linkMateria)
+                    dbMaterias.atualizarColuna('titulo_materia', pkNoticias, tituloMateria)
+                    dbMaterias.atualizarColuna('texto_materia', pkNoticias, textoMateria)
         except (AttributeError, TypeError, Exception):
             pass
     dbPortal.fecharConexao()
