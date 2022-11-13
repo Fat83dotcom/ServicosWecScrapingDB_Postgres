@@ -31,6 +31,22 @@ CREATE TABLE materiasportalG1(
 	texto_materia text null
 );
 
+CREATE TABLE portalUOL(
+	id_pk int primary key,
+	dt_hr_pesquisa timestamp without time zone null,
+	nome_sessao varchar(100) null,
+	link_site varchar(255) null unique
+);
+
+CREATE TABLE materiasportalUOL(
+	id_pk int primary key,
+	referencia_site int null references portalUOL(id_pk),
+	dt_materia date null,
+	link_materia text null,
+	titulo_materia text null,
+	texto_materia text null
+);
+
 -- drop table materiasportal
 -- drop table portalcnn
 
@@ -56,6 +72,9 @@ select * from portalg1
 select * from materiasportalg1
 truncate table portalg1 cascade
 truncate table materiasportalg1
+
+select * from portalUOL
+select * from materiasportalUOL
 
 
 insert into portalcnn (id_pk, link_site) values

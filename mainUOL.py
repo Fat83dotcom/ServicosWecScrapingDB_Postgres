@@ -10,7 +10,7 @@ def coreUOL():
     dbPortal = OperacoesTabelasBD('portalUOL')
     dbMaterias = OperacoesTabelasBD('materiasportalUOL')
     dataHora: str = str(datetime.now())
-    dbLog.inserirColunas((dataHora, ''), coluna='(dt_hr_exec_func, func_portal)')
+    dbLog.inserirColunas((dataHora, 'UOL'), coluna='(dt_hr_exec_func, func_portal)')
 
     url = 'https://noticias.uol.com.br/'
     resposta = requests.get(url)
@@ -25,6 +25,7 @@ def coreUOL():
             linkSessao = linksMenuNoticias.a.get('href')
             print(pkPortal)
             print(linkSessao)
+            dbPortal.inserirColunas(f'({pkPortal})', coluna='(id_pk)')
             print(100 * '#')
             # print(nomeSessao)
             resposta = requests.get(linkSessao)
@@ -36,6 +37,8 @@ def coreUOL():
                 print(linkMateria)
                 for dadosMateria in html.select('.container.article'):
                     pkNoticias = next(_pkNoticias)
+                    dbMaterias.inserirColunas(f'({pkNoticias})', coluna='(id_pk)')
+                    # dbMaterias.inserirColunas(pkPortal, coluna=)
                     print(pkNoticias)
                     print(100 * '*')
                     tituloMateria = dadosMateria.select_one('.custom-title').get_text()
@@ -49,6 +52,9 @@ def coreUOL():
                     # print(textoMateria)
         except (AttributeError, TypeError, Exception):
             pass
+    dbPortal.fecharConexao()
+    dbMaterias.fecharConexao()
+    dbLog.fecharConexao()
 
 
 coreUOL()
