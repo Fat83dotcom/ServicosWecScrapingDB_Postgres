@@ -58,22 +58,18 @@ class OperacoesTabelasBD(BancoDeDados):
             atualizacao, nome_tabela=self.tablela,
             nome_colunas=coluna, condicao=condicao)
         try:
-            # print(sql)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception as erro:
-            # print(erro)
+        except Exception:
             self.Bd.abortar()
     
     def inserirColunas(self, *args, coluna):
         try:
             sql = self.geradorSQLInsert(*args, nome_colunas=coluna, nome_tabela=self.tablela)
-            print(sql)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception as erro:
+        except Exception:
             self.Bd.abortar()
-            print(erro)
     
     def fecharConexao(self):
         return self.Bd.fecharConexao()
