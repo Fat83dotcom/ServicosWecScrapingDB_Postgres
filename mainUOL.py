@@ -35,7 +35,6 @@ def coreUOL():
                 linkMateria = linksMaterias.a.get('href')
                 resposta = requests.get(linkMateria)
                 html = BeautifulSoup(resposta.text, 'html.parser')
-                print(linkMateria)
                 for dadosMateria in html.select('.container.article'):
                     pkNoticias = f'id_pk={next(_pkNoticias)}'
                     tituloMateria = dadosMateria.select_one('.custom-title').get_text().replace("'", '"')
