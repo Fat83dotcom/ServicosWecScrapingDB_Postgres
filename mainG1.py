@@ -16,7 +16,6 @@ def coreG1():
         url = 'https://g1.globo.com/'
         resposta = requests.get(url)
         html = BeautifulSoup(resposta.text, 'html.parser')
-
         _pkPortal = count(0)
         _pkNoticias = count(0)
         filtroDeLinks: set = set()
@@ -35,7 +34,6 @@ def coreG1():
                 dbPortal.atualizarColuna('dt_hr_pesquisa', f'id_pk={pkPortal}', dataHora)
                 dbPortal.atualizarColuna('nome_sessao', f'id_pk={pkPortal}', nomeSessao)
                 dbPortal.atualizarColuna('link_site', f'id_pk={pkPortal}', links)
-
                 for dadosMateria in html.select('.feed-post-link'):
                     linkMateria = dadosMateria.get('href')
                     if linkMateria is not None:
@@ -55,7 +53,7 @@ def coreG1():
                                 dbMaterias.atualizarColuna('link_materia', pkNoticias, linkMateria)
                                 dbMaterias.atualizarColuna('titulo_materia', pkNoticias, tituloMateria)
                                 dbMaterias.atualizarColuna('texto_materia', pkNoticias, textoMateria)
-    except Exception as e:
+    except (AttributeError, TypeError, Exception) as e:
         registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreG1')
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()

@@ -52,7 +52,7 @@ def coreCnn():
                     dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
                     datetime.strptime(dataMateria, '%d/%m/%Y'))
                     dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)
-    except Exception as e:
+    except (AttributeError, TypeError, Exception) as e:
         registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreCnn')
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()

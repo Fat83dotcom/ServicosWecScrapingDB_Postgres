@@ -15,7 +15,6 @@ def coreUOL():
         url = 'https://noticias.uol.com.br/'
         resposta = requests.get(url)
         html = BeautifulSoup(resposta.text, 'html.parser')
-        
         _pkPortal = count(0)
         _pkNoticias = count(0)
         for linksMenuNoticias in html.select('.heading-style'):
@@ -23,7 +22,6 @@ def coreUOL():
             pkPortal = f'id_pk={pkPortalCru}'
             nomeSessao = linksMenuNoticias.select_one('.custom-title').get_text()
             linkSessao = linksMenuNoticias.a.get('href')
-            
             resposta = requests.get(linkSessao)
             html = BeautifulSoup(resposta.text, 'html.parser')
             for linksMaterias in html.select('.thumbnails-item.align-horizontal'):
@@ -38,7 +36,6 @@ def coreUOL():
                     textoMateria = ''
                     for textoCru in dadosMateria.select_one('.text').find_all('p'):
                         textoMateria += textoCru.get_text(' | ', strip=True).replace("'", '"')
-                    
                     dbPortal.atualizarColuna('dt_hr_pesquisa', pkPortal, dataHora)
                     dbPortal.atualizarColuna('nome_sessao', pkPortal, nomeSessao)
                     dbPortal.atualizarColuna('link_site', pkPortal, linkSessao)
