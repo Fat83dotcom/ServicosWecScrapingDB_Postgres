@@ -47,6 +47,16 @@ CREATE TABLE materiasportalUOL(
 	texto_materia text null
 );
 
+CREATE TABLE log_erro(
+	id_pk serial primary key,
+	dt_hr_erro timestamp without time zone null, 
+	classe_erro varchar(255) null, 
+	descricao_erro text null,
+	nome_funcao_origem varchar(255) null
+);
+
+select * from log_erro
+
 -- drop table materiasportal
 -- drop table portalcnn
 
