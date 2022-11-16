@@ -3,19 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 from database import OperacoesTabelasBD
 from itertools import count
-
-
-def registradorErros(func_name, classe_erro, desc_erro):
-    try:
-        dataHora: str = str(datetime.now())
-        dbLogErro = OperacoesTabelasBD('log_erro')
-        dbLogErro.inserirColunas(f"('{dataHora}', '{classe_erro}', '{desc_erro}', '{func_name}')", \
-            coluna='(dt_hr_erro, classe_erro, descricao_erro, nome_funcao_origem)')
-    except Exception as e:
-        with open(f'logs/log_erro_{dataHora}.txt', 'w') as arquivo:
-            erro = f'{str(e.__class__.__name__)}, {str(e)}'
-            arquivo.write(erro)
-
+from funcao_registradora_de_erros import registradorErros
 
 def coreUOL():
     dbLog = OperacoesTabelasBD('"Core_logservicos"')
@@ -61,7 +49,7 @@ def coreUOL():
                     dbMaterias.atualizarColuna('titulo_materia', pkNoticias, tituloMateria)
                     dbMaterias.atualizarColuna('texto_materia', pkNoticias, textoMateria)
         except (AttributeError, TypeError, Exception) as e:
-            registradorErros('coreUOL', e.__class__.__name__, str(e).replace("'", '"'))
+            registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreUOL')
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()
     dbLog.fecharConexao()

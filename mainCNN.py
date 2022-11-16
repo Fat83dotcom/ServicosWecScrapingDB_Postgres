@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 from database import OperacoesTabelasBD
 from itertools import count
+from funcao_registradora_de_erros import registradorErros
 
 
 def coreCnn():
@@ -24,33 +25,35 @@ def coreCnn():
         'https://www.cnnbrasil.com.br/estilo/',
         'https://www.cnnbrasil.com.br/loterias/',
     ]
-
-    _pkNoticias = count(0)
-    for pk, links in enumerate(url):
-        resposta = requests.get(links)
-        html = BeautifulSoup(resposta.text, 'html.parser')
-        nomeSessao = links.split('/')[-2]
-        dbPortal.atualizarColuna('dt_hr_pesquisa',f'id_pk={pk}', dataHora)
-        dbPortal.atualizarColuna('link_site', f'id_pk={pk}', links)
-        dbPortal.atualizarColuna('nome_sessao', f'id_pk={pk}', nomeSessao)
-        for noticias in html.select('.home__list__item'):
-            _pkeyNoticias = next(_pkNoticias)
-            tituloMateria = noticias.a.get_text().strip()
-            linkMateria = noticias.a.get('href').strip()
-            dbMaterias.atualizarColuna('referencia_site', f'id_pk={_pkeyNoticias}', pk)
-            dbMaterias.atualizarColuna('link_materia', f'id_pk={_pkeyNoticias}', linkMateria)
-            dbMaterias.atualizarColuna('titulo_materia', f'id_pk={_pkeyNoticias}', tituloMateria)
-            resp = requests.get(linkMateria)
-            html1 = BeautifulSoup(resp.text, 'html.parser')
-            for materia in html1.select('.posts'):
-                dataMateria = materia.select_one('.post__data').get_text(strip=True)[:11].strip()
-                textoCru = materia.find_all('p')
-                textoMateria = ''
-                for palavras in textoCru:
-                    textoMateria += palavras.get_text(' | ', strip=True)
-                dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
-                datetime.strptime(dataMateria, '%d/%m/%Y'))
-                dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)
+    try:
+        _pkNoticias = count(0)
+        for pk, links in enumerate(url):
+            resposta = requests.get(links)
+            html = BeautifulSoup(resposta.text, 'html.parser')
+            nomeSessao = links.split('/')[-2]
+            dbPortal.atualizarColuna('dt_hr_pesquisa',f'id_pk={pk}', dataHora)
+            dbPortal.atualizarColuna('link_site', f'id_pk={pk}', links)
+            dbPortal.atualizarColuna('nome_sessao', f'id_pk={pk}', nomeSessao)
+            for noticias in html.select('.home__list__item'):
+                _pkeyNoticias = next(_pkNoticias)
+                tituloMateria = noticias.a.get_text().strip()
+                linkMateria = noticias.a.get('href').strip()
+                dbMaterias.atualizarColuna('referencia_site', f'id_pk={_pkeyNoticias}', pk)
+                dbMaterias.atualizarColuna('link_materia', f'id_pk={_pkeyNoticias}', linkMateria)
+                dbMaterias.atualizarColuna('titulo_materia', f'id_pk={_pkeyNoticias}', tituloMateria)
+                resp = requests.get(linkMateria)
+                html1 = BeautifulSoup(resp.text, 'html.parser')
+                for materia in html1.select('.posts'):
+                    dataMateria = materia.select_one('.post__data').get_text(strip=True)[:11].strip()
+                    textoCru = materia.find_all('p')
+                    textoMateria = ''
+                    for palavras in textoCru:
+                        textoMateria += palavras.get_text(' | ', strip=True)
+                    dbMaterias.atualizarColuna('dt_materia', f'id_pk={_pkeyNoticias}',
+                    datetime.strptime(dataMateria, '%d/%m/%Y'))
+                    dbMaterias.atualizarColuna('texto_materia', f'id_pk={_pkeyNoticias}', textoMateria)
+    except Exception as e:
+        registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreCnn')
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()
     dbLog.fecharConexao()
