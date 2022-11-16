@@ -60,16 +60,18 @@ class OperacoesTabelasBD(BancoDeDados):
         try:
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
+        except Exception as e:
             self.Bd.abortar()
+            raise e
     
     def inserirColunas(self, *args, coluna):
         try:
             sql = self.geradorSQLInsert(*args, nome_colunas=coluna, nome_tabela=self.tablela)
             self.Bd.executar(sql)
             self.Bd.enviar()
-        except Exception:
+        except Exception as e:
             self.Bd.abortar()
+            raise e
     
     def fecharConexao(self):
         return self.Bd.fecharConexao()
