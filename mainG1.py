@@ -12,7 +12,6 @@ def coreG1():
     dbMaterias = OperacoesTabelasBD('materiasportalG1')
     dataHora: str = str(datetime.now())
     dbLog.inserirColunas((dataHora, 'G1'), coluna='(dt_hr_exec_func, func_portal)')
-
     try:
         url = 'https://g1.globo.com/'
         resposta = requests.get(url)

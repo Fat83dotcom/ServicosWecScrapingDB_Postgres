@@ -11,15 +11,14 @@ def coreUOL():
     dbMaterias = OperacoesTabelasBD('materiasportalUOL')
     dataHora: str = str(datetime.now())
     dbLog.inserirColunas((dataHora, 'UOL'), coluna='(dt_hr_exec_func, func_portal)')
-
-    url = 'https://noticias.uol.com.br/'
-    resposta = requests.get(url)
-    html = BeautifulSoup(resposta.text, 'html.parser')
-    
-    _pkPortal = count(0)
-    _pkNoticias = count(0)
-    for linksMenuNoticias in html.select('.heading-style'):
-        try:
+    try:
+        url = 'https://noticias.uol.com.br/'
+        resposta = requests.get(url)
+        html = BeautifulSoup(resposta.text, 'html.parser')
+        
+        _pkPortal = count(0)
+        _pkNoticias = count(0)
+        for linksMenuNoticias in html.select('.heading-style'):
             pkPortalCru = next(_pkPortal)
             pkPortal = f'id_pk={pkPortalCru}'
             nomeSessao = linksMenuNoticias.select_one('.custom-title').get_text()
@@ -48,8 +47,8 @@ def coreUOL():
                     dbMaterias.atualizarColuna('link_materia', pkNoticias, linkMateria)
                     dbMaterias.atualizarColuna('titulo_materia', pkNoticias, tituloMateria)
                     dbMaterias.atualizarColuna('texto_materia', pkNoticias, textoMateria)
-        except (AttributeError, TypeError, Exception) as e:
-            registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreUOL')
+    except (AttributeError, TypeError, Exception) as e:
+        registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreUOL')
     dbPortal.fecharConexao()
     dbMaterias.fecharConexao()
     dbLog.fecharConexao()
