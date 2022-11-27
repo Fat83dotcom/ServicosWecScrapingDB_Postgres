@@ -77,7 +77,6 @@ class OperacoesTabelasBD(BancoDeDados):
         return self.Bd.fecharConexao()
 
 
-
 if __name__ == '__main__':
     teste = OperacoesTabelasBD('portalcnn')
     teste.atualizarColuna('link_materia', 'id_pk=0', 'fiuerfiuerhfieurhfieurfheirufhe' )
