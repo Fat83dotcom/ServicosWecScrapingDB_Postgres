@@ -23,24 +23,38 @@ def coreTerra():
                 linkNoticia = noticia.h2.a.get('href')
                 resposta = requests.get(linkNoticia)
                 html = BeautifulSoup(resposta.text, 'html.parser')
-                if 'poder360' in str(linkNoticia):
-                    print(linkNoticia)
-                    print('Sem Conteudo ainda')
-                elif 'cartacapital' in str(linkNoticia):
-                    print(linkNoticia)
-                    print('Sem Conteudo ainda')
-                elif 'terra.com' in str(linkNoticia):
-                    conteudoPagina = html.find_all('article', {'class':'article'})
+                if 'poder360.com' in str(linkNoticia):
+                    conteudoPagina = html.find('main', {'class':'site-main'})
+                    tituloMateria = conteudoPagina.h3.get_text()
+                    dt_materia = conteudoPagina.find(
+                        'span', {'class':'inner-page-section__date'}
+                        ).get_text().strip().replace('.', '-')
                     print(100 * '#')
                     print(linkNoticia)
-                    print(conteudoPagina)
+                    print(tituloMateria)
+                    print(dt_materia)
+                    print(100 * '#')
+                elif 'cartacapital.com' in str(linkNoticia):
+                    conteudoPagina = html.find('main', {'class':'open'})
+                    tituloMateria = conteudoPagina.h1.get_text()
+                    print(100 * '#')
+                    print(linkNoticia)
+                    print(tituloMateria)
+                    print(100 * '#')
+                elif 'terra.com' in str(linkNoticia):
+                    conteudoPagina = html.find('article', {'class':'article'})
+                    tituloMateria = conteudoPagina.h1.get_text()
+                    print(100 * '#')
+                    print(linkNoticia)
+                    print(tituloMateria)
                     print(100 * '#')
                 else:
                     print(linkNoticia)
                     print('Conteudo externo')
             print(100 * '*')
     except (AttributeError, TypeError, Exception) as e:
-        registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
+        # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
+        print(e)
 
 
 coreTerra()
