@@ -47,6 +47,22 @@ CREATE TABLE materiasportalUOL(
 	texto_materia text null
 );
 
+CREATE TABLE portalTerra(
+	id_pk int primary key,
+	dt_hr_pesquisa timestamp without time zone null,
+	nome_sessao varchar(100) null,
+	link_site varchar(255) null unique
+);
+
+CREATE TABLE materiasportalTerra(
+	id_pk int primary key,
+	referencia_site int null references portalTerra(id_pk),
+	dt_materia date null,
+	link_materia text null,
+	titulo_materia text null,
+	texto_materia text null
+);
+
 CREATE TABLE log_erro(
 	id_pk serial primary key,
 	dt_hr_erro timestamp without time zone null, 
