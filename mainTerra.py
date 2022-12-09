@@ -23,34 +23,58 @@ def coreTerra():
                 linkNoticia = noticia.h2.a.get('href')
                 resposta = requests.get(linkNoticia)
                 html = BeautifulSoup(resposta.text, 'html.parser')
-                if 'poder360.com' in str(linkNoticia):
-                    conteudoPagina = html.find('main', {'class':'site-main'})
-                    tituloMateria = conteudoPagina.h3.get_text()
-                    dt_materia = conteudoPagina.find(
-                        'span', {'class':'inner-page-section__date'}
-                        ).get_text().strip().replace('.', '-')
-                    print(100 * '#')
-                    print(linkNoticia)
-                    print(tituloMateria)
-                    print(dt_materia)
-                    print(100 * '#')
-                elif 'cartacapital.com' in str(linkNoticia):
-                    conteudoPagina = html.find('main', {'class':'open'})
-                    tituloMateria = conteudoPagina.h1.get_text()
-                    print(100 * '#')
-                    print(linkNoticia)
-                    print(tituloMateria)
-                    print(100 * '#')
-                elif 'terra.com' in str(linkNoticia):
-                    conteudoPagina = html.find('article', {'class':'article'})
-                    tituloMateria = conteudoPagina.h1.get_text()
-                    print(100 * '#')
-                    print(linkNoticia)
-                    print(tituloMateria)
-                    print(100 * '#')
-                else:
-                    print(linkNoticia)
-                    print('Conteudo externo')
+                try:
+                    if 'poder360.com' in str(linkNoticia):
+                        conteudoPagina = html.find('main', {'class':'site-main'})
+                        tituloMateria = conteudoPagina.h3.get_text()
+                        dt_materia = html.find(
+                            'span', {'class':'inner-page-section__date'}
+                            ).get_text().strip().replace('.', '-')
+                        conteudoPagina = conteudoPagina.find(
+                            'div', {'class':'inner-page-section__text'}
+                        )
+                        textoPagina = ''
+                        for texto in conteudoPagina.find_all('p'):
+                            textoPagina += texto.get_text('|', strip=True)    
+                        print(100 * '#')
+                        print(linkNoticia)
+                        print(tituloMateria)
+                        print(dt_materia)
+                        print(textoPagina)
+                        print(100 * '#')
+                    elif 'cartacapital.com' in str(linkNoticia):
+                        conteudoPagina = html.find('main', {'class':'open'})
+                        tituloMateria = conteudoPagina.h1.get_text()
+                        dt_materia = conteudoPagina.find(
+                            'div', {'class', 's-content__infos'}
+                            ).span.get_text()
+                        print(100 * '#')
+                        print(linkNoticia)
+                        print(tituloMateria)
+                        print(dt_materia)
+                        print(100 * '#')
+                    elif 'terra.com' in str(linkNoticia):
+                        conteudoPagina = html.find('article', {'class':'article'})
+                        tituloMateria = conteudoPagina.h1.get_text()
+                        dt_materia = conteudoPagina.find(
+                            'div', {'class': 'article__content--body'}
+                            ).meta.get('content')[:10]
+                        textoPagina = ''
+                        for texto in conteudoPagina.find_all(
+                            'p', {'class': 'text'}):
+                            textoPagina += texto.get_text('|', strip=True)
+                        print(100 * '#')
+                        print(linkNoticia)
+                        print(tituloMateria)
+                        print(dt_materia)
+                        print(textoPagina)
+                        print(100 * '#')
+                    else:
+                        print(linkNoticia)
+                        print('Conteudo externo')
+                except (AttributeError, TypeError, Exception) as e:
+                    # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
+                    print(e)        
             print(100 * '*')
     except (AttributeError, TypeError, Exception) as e:
         # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
