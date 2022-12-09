@@ -29,12 +29,11 @@ def coreTerra():
                         tituloMateria = conteudoPagina.h3.get_text()
                         dt_materia = html.find(
                             'span', {'class':'inner-page-section__date'}
-                            ).get_text().strip().replace('.', '-')
-                        conteudoPagina = conteudoPagina.find(
-                            'div', {'class':'inner-page-section__text'}
-                        )
+                        ).get_text().strip().replace('.', '-')
                         textoPagina = ''
-                        for texto in conteudoPagina.find_all('p'):
+                        for texto in conteudoPagina.find(
+                            'div', {'class':'inner-page-section__text'}
+                            ).find_all('p'):
                             textoPagina += texto.get_text('|', strip=True)    
                         print(100 * '#')
                         print(linkNoticia)
@@ -48,10 +47,16 @@ def coreTerra():
                         dt_materia = conteudoPagina.find(
                             'div', {'class', 's-content__infos'}
                             ).span.get_text()
+                        textoPagina = ''
+                        for texto in conteudoPagina.find(
+                            'div', {'class':'contentOpen'}
+                            ).find_all('p'):
+                            textoPagina += texto.get_text('|', strip=True)
                         print(100 * '#')
                         print(linkNoticia)
                         print(tituloMateria)
                         print(dt_materia)
+                        print(textoPagina)
                         print(100 * '#')
                     elif 'terra.com' in str(linkNoticia):
                         conteudoPagina = html.find('article', {'class':'article'})
@@ -74,11 +79,15 @@ def coreTerra():
                         print('Conteudo externo')
                 except (AttributeError, TypeError, Exception) as e:
                     # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
-                    print(e)        
+                    print(e)
+                    print(linkMenu)
+                    print(linkNoticia)
             print(100 * '*')
     except (AttributeError, TypeError, Exception) as e:
         # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
         print(e)
+        print(linkMenu)
+        print(linkNoticia)
 
 
 coreTerra()
