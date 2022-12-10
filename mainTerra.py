@@ -5,9 +5,15 @@ from database import OperacoesTabelasBD
 from itertools import count
 from funcao_registradora_de_erros import registradorErros
 
-# https://www.terra.com.br/noticias/ 
 
 def coreTerra():
+    dbLog = OperacoesTabelasBD('"Core_logservicos"')
+    dbPortal = OperacoesTabelasBD('portalterra')
+    dbMaterias = OperacoesTabelasBD('materiasportalterra')
+    dataHora: str = str(datetime.now())
+    dbLog.inserirColunas((dataHora, 'Terra'), coluna='(dt_hr_exec_func, func_portal)')
+    _pkPortal = count(0)
+    _pkNoticias = count(0)
     try:
         url = 'https://www.terra.com.br/noticias/'
         resposta = requests.get(url)
@@ -17,12 +23,14 @@ def coreTerra():
             nomeSessao: str = linkMenu.get_text().strip()
             print(link)
             print(nomeSessao)
+            print(next(_pkPortal))
             resposta = requests.get(link)
             html = BeautifulSoup(resposta.text, 'html.parser')
             for noticia in html.find_all('div', {'class':'card-news__text'}):
                 linkNoticia = noticia.h2.a.get('href')
                 resposta = requests.get(linkNoticia)
                 html = BeautifulSoup(resposta.text, 'html.parser')
+                print(next(_pkNoticias))
                 try:
                     if 'poder360.com' in str(linkNoticia):
                         conteudoPagina = html.find('main', {'class':'site-main'})
@@ -36,10 +44,10 @@ def coreTerra():
                             ).find_all('p'):
                             textoPagina += texto.get_text('|', strip=True)    
                         print(100 * '#')
-                        print(linkNoticia)
-                        print(tituloMateria)
-                        print(dt_materia)
-                        print(textoPagina)
+                        # print(linkNoticia)
+                        # print(tituloMateria)
+                        # print(dt_materia)
+                        # print(textoPagina)
                         print(100 * '#')
                     elif 'cartacapital.com' in str(linkNoticia):
                         conteudoPagina = html.find('main', {'class':'open'})
@@ -53,10 +61,10 @@ def coreTerra():
                             ).find_all('p'):
                             textoPagina += texto.get_text('|', strip=True)
                         print(100 * '#')
-                        print(linkNoticia)
-                        print(tituloMateria)
-                        print(dt_materia)
-                        print(textoPagina)
+                        # print(linkNoticia)
+                        # print(tituloMateria)
+                        # print(dt_materia)
+                        # print(textoPagina)
                         print(100 * '#')
                     elif 'terra.com' in str(linkNoticia):
                         conteudoPagina = html.find('article', {'class':'article'})
@@ -69,10 +77,10 @@ def coreTerra():
                             'p', {'class': 'text'}):
                             textoPagina += texto.get_text('|', strip=True)
                         print(100 * '#')
-                        print(linkNoticia)
-                        print(tituloMateria)
-                        print(dt_materia)
-                        print(textoPagina)
+                        # print(linkNoticia)
+                        # print(tituloMateria)
+                        # print(dt_materia)
+                        # print(textoPagina)
                         print(100 * '#')
                     else:
                         print(linkNoticia)
@@ -80,14 +88,14 @@ def coreTerra():
                 except (AttributeError, TypeError, Exception) as e:
                     # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
                     print(e)
-                    print(linkMenu)
-                    print(linkNoticia)
+                    # print(linkMenu)
+                    # print(linkNoticia)
             print(100 * '*')
     except (AttributeError, TypeError, Exception) as e:
         # registradorErros(e.__class__.__name__, str(e).replace("'", '"'), 'coreTerra')
         print(e)
-        print(linkMenu)
-        print(linkNoticia)
+        # print(linkMenu)
+        # print(linkNoticia)
 
 
 coreTerra()
